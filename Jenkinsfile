@@ -1,34 +1,33 @@
 pipeline {
-    agent  { label 'verisoft-2' }
+    agent {label 'verisoft-2'}
 
     parameters {
-        string(name: 'REPO_URL', defaultValue: 'https://github.com/dvora-wa/Automation.git', description: 'Repository URL')
-        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branch to build')
+        string(name: 'REPO_URL', defaultValue: 'https://github.com/tamar240/pipelineProject', description: 'Repository URL')
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: 'Branch name to build')
     }
 
     environment {
-        CENTRAL_BRANCH = 'main'
+        MAIN_BRANCH = 'main'
     }
 
-    // triggers {
-    //     cron('30 5 * * 1\n0 14 * * *')
-    // }
-
     stages {
-        stage('Clone Repository') {
+        stage('Clone code') {
             steps {
-                echo "Cloning repository from ${params.REPO_URL} (branch: ${params.BRANCH_NAME})"
-                timeout(time: 5, unit: 'MINUTES') {
-                    git branch: "${params.BRANCH_NAME}", url: "${params.REPO_URL}"
+                script {
+                    if (params.BRANCH_NAME == env.MAIN_BRANCH) {
+                        checkout scm
+                    } else {
+                        git branch: "${params.BRANCH_NAME}", url: "${params.REPO_URL}"
+                    }
                 }
             }
         }
 
-        stage('Compile') {
+        stage('Compilation') {
             steps {
                 echo 'Starting compilation stage'
                 timeout(time: 5, unit: 'MINUTES') {
-                    sh 'mvn compile'
+                    sh returnStatus:true,script:'mvn compile'
                 }
                 echo 'Compilation stage completed successfully'
             }
@@ -38,7 +37,7 @@ pipeline {
             steps {
                 echo 'Starting test stage'
                 timeout(time: 5, unit: 'MINUTES') {
-                    sh 'mvn test'
+                    sh returnStatus:true,script:'mvn test'
                 }
                 echo 'Test stage completed successfully'
             }
@@ -47,15 +46,15 @@ pipeline {
 
     post {
         success {
-            echo '✅ Pipeline completed successfully'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo '❌ Pipeline failed'
+            echo 'Pipeline failed.'
         }
     }
 
-     triggers {
+ triggers {
      cron('30 5 * * 1\n0 14 * * *')
-   }
+ }
 
 }
