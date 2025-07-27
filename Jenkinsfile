@@ -53,8 +53,8 @@ pipeline {
         }
     }
 
- triggers {
-     cron('30 5 * * 1\n0 14 * * *')
- }
+    triggers {
+       cron('30 5 * * 1\n0 14 * * *')
+   }
 
 }
