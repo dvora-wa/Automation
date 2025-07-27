@@ -10,9 +10,9 @@ pipeline {
         CENTRAL_BRANCH = 'main'
     }
 
-    triggers {
-        cron('30 5 * * 1\n0 14 * * *')
-    }
+    // triggers {
+    //     cron('30 5 * * 1\n0 14 * * *')
+    // }
 
     stages {
         stage('Clone Repository') {
@@ -53,4 +53,9 @@ pipeline {
             echo '❌ Pipeline failed'
         }
     }
+
+     triggers {
+     cron('30 5 * * 1\n0 14 * * *')
+   }
+
 }
