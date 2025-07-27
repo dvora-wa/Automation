@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.6-eclipse-temurin-17' // תמונת Docker עם Maven + JDK
+            args '-v /root/.m2:/root/.m2' // שמירת cache של Maven בין ריצות
+        }
+    }
 
     parameters {
         string(name: 'REPO_URL', defaultValue: 'https://github.com/your-org/your-repo.git', description: 'Repository URL')
